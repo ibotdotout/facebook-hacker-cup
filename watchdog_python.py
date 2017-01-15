@@ -18,7 +18,7 @@ def when_file_changed(filename):
         filename = filename.replace(basename, "tests/" + basename + "_test")
     else:
         package = os.path.basename(filename).replace("_test.py", "")
-    cmd = "nosetests --with-coverage --cover-erase " \
+    cmd = "nosetests-3.4 --with-coverage --cover-erase " \
           "--cover-package={package} -v {filename}".format(**locals())
     os.system(cmd)
 
