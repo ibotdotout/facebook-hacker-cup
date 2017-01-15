@@ -2,26 +2,33 @@
 
 # http://www.geeksforgeeks.org/dynamic-programming-set-10-0-1-knapsack-problem/
 
+MAX = 9999999999999
+N = 310
 
-def cal_price(items, n):
-    picks = items[:n]
-    result = sum(picks) + len(picks) ** 2
-    return result
+# shared matrix for reduce computed time
+K = [[MAX for _ in range(N)] for _ in range(N)]  # dp
+C = [[0 for _ in range(N)] for _ in range(N)]  # accumulate
 
 
 def solve(n, m, prices):
-    MAX = 9999999999999
-    K = [[MAX for x in range(n+1)] for x in range(n+1)]
     sorted_price = [sorted(p) for p in prices]
 
+    # calculate accumulate
+    for i in range(1, n + 1):
+        C[i][0] = 0
+        for j in range(1, m + 1):
+            C[i][j] = C[i][j-1] + sorted_price[i-1][j-1]
+
+    # clear K
+    for i in range(n + 1):
+        for j in range(n + 1):
+            K[i][j] = MAX
+
+    K[0][0] = 0
     for d in range(1, n+1):
-        for w in range(n+1):
-            for i in range(m+1):
-                items = sorted_price[d-1]
-                if i <= w:
-                    prev = 0 if w - i == 0 else K[d-1][w-i]
-                    val = cal_price(items, i)
-                    K[d][w] = min(val + prev, K[d][w])
+        for w in range(d, n+1):
+            for i in range(min(m + 1, w + 1)):
+                K[d][w] = min(K[d-1][w-i] + C[d][i] + i * i,  K[d][w])
     return K[n][n]
 
 
